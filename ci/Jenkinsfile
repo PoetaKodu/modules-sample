@@ -31,6 +31,10 @@ pipeline {
       }
       steps {
         script {
+          sh '''
+          cd ..
+          '''
+
           // Definiowanie ścieżki do artefaktu
           def artefactPath = 'bin/Release/ModulesSampleApp'
 
