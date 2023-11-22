@@ -14,8 +14,8 @@ pipeline {
         sh '''
         mkdir -p build
         cd build
-        cmake ..
-        cmake --build . --config Debug --target ALL_BUILD
+        export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && cmake ..
+        export CC=/usr/bin/clang && export CXX=/usr/bin/clang++ && cmake --build . --config Debug --target ALL_BUILD
         '''
         echo "Build completed."
       }
