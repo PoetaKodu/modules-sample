@@ -1,0 +1,34 @@
+pipeline {
+  agent { 
+    node {
+      label 'docker-arch-builder'
+    }
+  }
+  triggers {
+    pollSCM '2/* * * * *'
+  }
+  stages {
+    stage('build') {
+      steps {
+        echo "Building sample app..."
+        sh '''
+        cd modules-sample
+        mkdir -p build
+        cd build
+        cmake ..
+        cmake --build . --config Debug --target ALL_BUILD
+        '''
+        echo "Build completed."
+      }
+    }
+    // TODO: add tests
+    stage('deliver') {
+      steps {
+        echo 'Delivering built sample app...'
+        sh '''
+        echo "TODO: implement delivery"
+        '''
+      }
+    }
+  }
+}
