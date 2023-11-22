@@ -12,7 +12,6 @@ pipeline {
       steps {
         echo "Building sample app..."
         sh '''
-        cd modules-sample
         mkdir -p build
         cd build
         cmake ..
