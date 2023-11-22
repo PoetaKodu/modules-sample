@@ -19,18 +19,42 @@ pipeline {
         mkdir -p build
         cd build
         cmake -G Ninja ..
-        cmake --build . --config Debug
+        cmake --build . --config Release
         '''
         echo "Build completed."
       }
     }
     // TODO: add tests
-    stage('deliver') {
+    stage('release') {
+      environment {
+        GITHUB_TOKEN = credentials('github-token')
+      }
       steps {
-        echo 'Delivering built sample app...'
-        sh '''
-        echo "TODO: implement delivery"
-        '''
+        script {
+          // Definiowanie ścieżki do artefaktu
+          def artefactPath = 'bin/Release/ModulesSampleApp'
+
+          if (fileExists(artefactPath)) {
+            sh '''
+            curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type:application/json" https://api.github.com/repos/PoetaKodu/modules-sample/releases \
+            -d '{
+                  "tag_name": "v${BUILD_NUMBER}",
+                  "target_commitish": "release",
+                  "name": "v${BUILD_NUMBER}",
+                  "body": "Release of build ${BUILD_NUMBER}",
+                  "draft": false,
+                  "prerelease": false
+                }'
+            '''
+
+            // Wrzucanie artefaktu do release
+            sh '''
+            curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Content-Type:application/octet-stream" --data-binary @${artefactPath} https://uploads.github.com/repos/PoetaKodu/modules-sample/releases/latest/assets?name=ModulesSampleApp
+            '''
+          } else {
+            echo "Artefact not found: ${artefactPath}"
+          }
+        }
       }
     }
   }
