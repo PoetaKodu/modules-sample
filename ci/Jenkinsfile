@@ -19,7 +19,7 @@ pipeline {
         mkdir -p build
         cd build
         cmake -G Ninja ..
-        cmake --build . --config Debug --target ALL_BUILD
+        cmake --build . --config Debug
         '''
         echo "Build completed."
       }
